@@ -1,0 +1,229 @@
+html,
+body {
+  font-family: Helvetica, Arial, sans-serif;
+  color: white;
+  height: 100%;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+  -ms-flex-direction: column;
+  flex-direction: column;
+  -webkit-box-pack: center;
+  -ms-flex-pack: center;
+  justify-content: center; }
+
+.layout, body {
+  height: 80%;
+  padding: 20px;
+  color: white; }
+
+.layout {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-item-align: center;
+  align-self: center;
+  width: 590px;
+  border-radius: 25px;
+  background-color: #7093c9;
+  -webkit-box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.5);
+  box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.5); }
+
+.layout * {
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box; }
+
+.layout h1 {
+  font-family: Lobster, Arial;
+  text-align: center; }
+
+section {
+  position: relative;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+  -ms-flex-direction: column;
+  flex-direction: column;
+  -ms-flex-line-pack: center;
+  align-content: center;
+  width: 100%; }
+
+.ic-container {
+  position: relative;
+  max-width: 400px;
+  max-height: 400px;
+  margin: auto; }
+
+.ic-overlay-n,
+.ic-overlay-e,
+.ic-overlay-s,
+.ic-overlay-w {
+  position: absolute;
+  background-color: #000;
+  opacity: 0.7; }
+
+.ic-overlay-n {
+  top: 0; }
+
+.ic-overlay-e {
+  top: 0;
+  right: 0;
+  bottom: 0; }
+
+.ic-overlay-s {
+  bottom: 0; }
+
+.ic-overlay-w {
+  top: 0;
+  bottom: 0;
+  left: 0; }
+
+.ic-resize-handle-ne,
+.ic-resize-handle-se,
+.ic-resize-handle-nw,
+.ic-resize-handle-sw {
+  position: absolute;
+  width: 15px;
+  height: 15px;
+  background: #ce9760;
+  z-index: 999; }
+
+.ic-resize-handle-nw {
+  top: -5px;
+  left: -5px;
+  cursor: nw-resize; }
+
+.ic-resize-handle-sw {
+  bottom: -5px;
+  left: -5px;
+  cursor: sw-resize; }
+
+.ic-resize-handle-ne {
+  top: -5px;
+  right: -5px;
+  cursor: ne-resize; }
+
+.ic-resize-handle-se {
+  bottom: -5px;
+  right: -5px;
+  cursor: se-resize; }
+
+.ic-crop-marker {
+  position: absolute;
+  z-index: 999;
+  border: solid 2px #ce9760;
+  cursor: move; }
+
+.ic-move-handle {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0; }
+
+#fullImage, .ic-container img, #backUpImage {
+  max-width: 400px;
+  max-height: 400px; }
+
+#fullImage {
+  display: block; }
+
+.hidden {
+  display: none; }
+
+.drop {
+  cursor: pointer;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  position: relative;
+  width: 100%;
+  height: 100%;
+  font-size: 30px;
+  color: white;
+  border: 5px dashed rgba(255, 255, 255, 0.6); }
+
+.drop.dragging,
+.drop:hover {
+  border-color: white; }
+
+.drop p {
+  padding-left: 50px;
+  padding-right: 50px;
+  width: 100%;
+  text-align: center; }
+
+.image-resize, #thumbnail {
+  width: -webkit-fit-content;
+  width: -moz-fit-content;
+  width: fit-content;
+  margin: auto; }
+
+.button-group {
+  margin: auto;
+  margin-top: 20px;
+  margin-bottom: 20px; }
+
+.btn {
+  cursor: pointer;
+  z-index: 999;
+  padding: 6px 12px;
+  margin: 5px;
+  border-radius: 5px;
+  color: #ffffff;
+  background-color: #1e435b;
+  -webkit-box-shadow: 0 2px 5px black;
+  box-shadow: 0 2px 5px black; }
+  .btn img {
+    max-width: 20px;
+    vertical-align: bottom; }
+
+.btn.restart {
+  position: absolute;
+  top: 0;
+  left: 0;
+  margin-right: auto; }
+
+.thumbnail {
+  display: inline-block;
+  margin: auto;
+  height: 400px;
+  border-radius: 5px; }
+
+#overlayDrag {
+  position: absolute;
+  width: 400px;
+  height: 84px; }
+  #overlayDrag img {
+    width: 400px;
+    height: 84px;
+    outline: 1px solid #000000; }
+  @media screen and (max-width: 600px) {
+  .layout, body {
+    max-width: 100%;
+    height: 100%; }
+  #fullImage, .ic-container img, #backUpImage, #thumbnail {
+    max-width: 250px;
+    max-height: 250px; }
+  .ic-container {
+    max-width: 250px;
+    max-height: 250px;
+    margin: auto; }
+  #overlayDrag {
+    position: absolute;
+    width: 250px;
+    height: 53px; }
+    #overlayDrag img {
+      margin: auto;
+      width: 250px;
+      height: 100%;
+      outline: 1px solid #000000; }
+  .mobile-hidden {
+    display: none; } }
