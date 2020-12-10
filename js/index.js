@@ -13,22 +13,20 @@ $(function () {
   var config = {
     desktopDimension: 400,
     mobileDimension: [350, 300],
-    overlay: false,
-    thumbnailPlaceholder: 'data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==',
-    overlayImageSource: 'surgicel-overlay.png'
+    thumbnailPlaceholder: 'data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw=='
   }; // Jquery Common Elements
 
   var $el = {
     doc: $(document),
     window: $(window),
-    sectionDragDrop: $('#sectionDragAndDrop'),
+    // sectionDragDrop:    $('#sectionDragAndDrop'),
     drop: $('#drop'),
-    sectionCrop: $('#sectionCrop'),
-    thumbnail: $('#thumbnail'),
+    // sectionCrop:        $('#sectionCrop'),
+    // thumbnail:          $('#thumbnail'),
     thumbnailImage: $('#thumbnailImage'),
-    sectionThumbnail: $('#sectionThumbnail'),
-    overlayImage: $('#overlayIMG'),
-    overlayDrag: $('#overlayDrag'),
+    // sectionThumbnail:   $('#sectionThumbnail'),
+    // overlayImage:       $('#overlayIMG'),
+    // overlayDrag:        $('#overlayDrag'),
     fileUpload: $('#fileUpload'),
     originalImage: $('.originalImage'),
     // Dynamically created elements
@@ -39,90 +37,13 @@ $(function () {
   var finalDimensionHeight = $el.window.width() > 600 ? config.desktopDimension : config.mobileDimension[0];
   var finalDimensionWidth = $el.window.width() > 600 ? config.desktopDimension : config.mobileDimension[1]; // global Vars
 
-  var overlayObject;
-  var croppedObject; // Set Overlay Image
-
-  $el.overlayImage.attr('src', config.overlayImageSource);
-  if ($el.thumbnailImage.attr('src') === '') $el.thumbnailImage.attr('src', config.thumbnailPlaceholder).width(finalDimensionWidth); // $el.overlayDrag.css('top', $el.thumbnailImage.position().top);
-
-  /**
-   * Position Overlay so use can align to their desire and Download the image
-   * @returns Two Functions {startMoving & createImage}
-   */
-
-  function overlayPosition() {
-    var overlayHeight = $el.overlayDrag.outerHeight(); // Initial Reference Point
-
-    var eventState = {};
-
-    var saveEventState = function saveEventState(e) {
-      eventState.containerTop = $el.overlayDrag.position().top;
-      eventState.mouseY = (e.clientY || e.pageY || e.originalEvent.touches[0].clientY) + $el.window.scrollTop();
-    }; // Unbind Events
-
-
-    var endMoving = function endMoving(e) {
-      e.preventDefault();
-      $el.doc.off('mouseup touchend', endMoving);
-      $el.doc.off('mousemove touchmove', moving);
-    }; // Overlay Only Moves Up & Down - Moves to Match Mouse Movement
-
-
-    var moving = function moving(e) {
-      var mouse = {};
-      var touches = e.originalEvent.touches;
-      var minTop = $el.thumbnailImage.position().top;
-      var top;
-      e.stopPropagation();
-      mouse.x = (e.clientX || e.pageX || touches[0].clientX) + $el.window.scrollLeft();
-      mouse.y = (e.clientY || e.pageY || touches[0].clientY) + $el.window.scrollTop();
-      top = mouse.y - (eventState.mouseY - eventState.containerTop);
-
-      if (top < minTop) {
-        top = minTop;
-      }
-
-      if (top + overlayHeight > finalDimensionHeight + minTop) {
-        top = finalDimensionHeight - overlayHeight + minTop;
-      }
-
-      $el.overlayDrag.css({
-        top: top
-      });
-    }; // Halting initial event and Bind new events
-
-
-    this.startMoving = function (e) {
-      e.preventDefault();
-      e.stopPropagation();
-      saveEventState(e);
-      $el.doc.on('mousemove touchmove', moving);
-      $el.doc.on('mouseup touchend', endMoving);
-    };
-    /**
-     * Create Canvas with Both Images on it and Saves it
-     */
-
-
-    this.createImage = function () {
-      // Overlay Final Top Position Relative to Image
-      var overlayFinalTop = $el.overlayDrag.position().top - $el.thumbnailImage.position().top;
-      var cropCanvas = document.createElement('canvas');
-      cropCanvas.width = finalDimensionWidth;
-      cropCanvas.height = finalDimensionHeight;
-      cropCanvas.id = 'finalImage';
-      cropCanvas.getContext('2d').drawImage($el.thumbnailImage[0], 0, 0, finalDimensionWidth, finalDimensionHeight, 0, 0, finalDimensionWidth, finalDimensionHeight);
-      cropCanvas.getContext('2d').drawImage($el.overlayImage[0], 0, 0, finalDimensionWidth, overlayHeight, 0, overlayFinalTop, finalDimensionWidth, overlayHeight); // Save Image using FileSaver.js Library
-
-      cropCanvas.toBlob(function (blob) {
-        saveAs(blob, 'finalImage.png');
-      });
-    };
-  } // **************
+  var croppedObject; // if ($el.thumbnailImage.attr('src') === '')
+  // $el.thumbnailImage.attr('src', config.thumbnailPlaceholder).width(finalDimensionWidth);
+  // $el.overlayDrag.css('top', $el.thumbnailImage.position().top);
+  // **************
   // *IMAGE CROP MODIFIED FROM (https://codepen.io/Mestika/pen/qOWaqp?editors=1010)
   // * Rotation Added using Base64 Function
   // *************
-
 
   function imageCropper() {
     // let minDimension = $el.originalImage.width() < $el.originalImage.height() ? $el.originalImage.width() : $el.originalImage.height();
@@ -369,10 +290,10 @@ $(function () {
       var cropTop = $el.cropMarker.position().top;
       var cropLeft = $el.cropMarker.position().left;
       var cropWidth = $el.cropMarker.width();
-      var cropHeight = $el.cropMarker.height();
-      console.log('imgWidth', imgWidth);
-      console.log('cropLeft', cropLeft);
-      console.log('cropWidth', cropWidth); // const cropBorder = parseFloat($cropMarker.css('border-top-width'));
+      var cropHeight = $el.cropMarker.height(); // console.log('imgWidth', imgWidth);
+      // console.log('cropLeft', cropLeft);
+      // console.log('cropWidth', cropWidth);
+      // const cropBorder = parseFloat($cropMarker.css('border-top-width'));
 
       $('#icOverlayN').css({
         right: imgWidth - cropLeft - cropWidth,
@@ -428,6 +349,7 @@ $(function () {
 
     this.rotateRight = function () {
       rotateBase64Image($el.backUpImage.attr('src'), 'right').then(function (rotated) {
+        // userAction('restart');
         $el.backUpImage.attr('src', "".concat(rotated));
       }).then(function () {
         if (_typeof($el.icContainer) === 'object') {
@@ -457,6 +379,7 @@ $(function () {
 
 
     this.crop = function () {
+      console.log('cropping');
       var cropCanvas;
       var scale = origSrc.width / $el.originalImage.width();
       var left = Math.round($el.cropMarker.position().left * scale);
@@ -471,6 +394,10 @@ $(function () {
         var newImg = document.createElement('img');
         var url = URL.createObjectURL(blob);
         $el.thumbnailImage.attr('src', url);
+        $el.thumbnailImage.removeClass('hidden');
+        $('#group1b').removeClass('hidden');
+        $('#imageResize').addClass('hidden');
+        $('#group1a').addClass('hidden');
 
         newImg.onload = function () {
           URL.revokeObjectURL(url);
@@ -521,9 +448,8 @@ $(function () {
 
 
   function initializeCropper() {
-    // $el.sectionCrop.removeClass('hidden');
+    croppedObject = new imageCropper(); // $el.sectionCrop.removeClass('hidden');
     // $el.sectionDragDrop.addClass('hidden');
-    croppedObject = new imageCropper();
   }
   /**
    * Converts image to dataURL with a FileReader resulting in a previews on screen within the cropTool
@@ -537,7 +463,8 @@ $(function () {
     var reader = new FileReader();
 
     reader.onload = function (e) {
-      userAction('restart'); // Create an image with the DataURL Source
+      userAction('restart');
+      userAction('recrop'); // Create an image with the DataURL Source
 
       var img = new Image();
 
@@ -575,9 +502,13 @@ $(function () {
       // $el.thumbnailImage.attr('src','');
     }
 
-    if (action === 'crop' || action === 'recrop') {
-      $el.sectionCrop.toggleClass('hidden');
-      $el.sectionThumbnail.toggleClass('hidden');
+    if (action === 'recrop') {
+      // $el.sectionCrop.toggleClass('hidden');
+      // $el.thumbnailImage.toggleClass('hidden');
+      $el.thumbnailImage.addClass('hidden');
+      $('#group1b').addClass('hidden');
+      $('#imageResize').removeClass('hidden');
+      $('#group1a').removeClass('hidden');
     }
 
     if (action === 'crop') {// $el.sectionCrop.addClass('hidden');
@@ -585,10 +516,9 @@ $(function () {
       // $el.overlayDrag.css('top', $el.thumbnailImage.position().top);
     }
 
-    if (action === 'recrop') {
-      // $el.sectionCrop.removeClass('hidden');
+    if (action === 'recrop') {// $el.sectionCrop.removeClass('hidden');
       // $el.sectionThumbnail.addClass('hidden');
-      $el.thumbnailImage.attr('src', "data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==").width(finalDimensionWidth);
+      // $el.thumbnailImage.attr('src', `data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==`).width(finalDimensionWidth);
     }
   }
 
@@ -630,10 +560,10 @@ $(function () {
     userAction('restart');
   });
   $('#crop').on('click', function (e) {
+    console.log('clicked');
     e.stopPropagation();
-    croppedObject.crop();
-    userAction('crop');
-    overlayObject = new overlayPosition();
+    croppedObject.crop(); // userAction('crop');
+    // overlayObject = new overlayPosition();
   });
   $('#rotateRight').on('click', function (e) {
     e.stopPropagation();
@@ -644,11 +574,9 @@ $(function () {
     e.stopPropagation();
     e.preventDefault();
     croppedObject.rotateLeft();
-  });
-  $el.overlayDrag.on('mousedown touchstart', function (e) {
-    overlayObject.startMoving(e);
-  });
-  $('#reCrop').on('click', function () {
+  }); // $el.overlayDrag.on('mousedown touchstart', (e) => {overlayObject.startMoving(e)});
+
+  $('#recrop').on('click', function () {
     userAction('recrop');
   });
   $('#download').on('click', function () {
