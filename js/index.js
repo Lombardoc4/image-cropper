@@ -357,7 +357,7 @@ $(function () {
         }
       }).then(function () {
         cloneAddImage($el.backUpImage);
-        initializeCropper();
+        croppedObject = new imageCropper();
       }).catch(function (err) {
         console.error(err);
       });
@@ -370,7 +370,7 @@ $(function () {
         if (_typeof($el.icContainer) === 'object') $el.icContainer.remove();
       }).then(function () {
         cloneAddImage($el.backUpImage);
-        initializeCropper();
+        croppedObject = new imageCropper();
       }).catch(function (err) {
         console.error(err);
       });
@@ -416,6 +416,25 @@ $(function () {
         });
         repositionOverlay();
       });
+    };
+    /**
+    * Create Canvas with Both Images on it and Saves it
+    */
+
+
+    this.createImage = function () {
+      // Overlay Final Top Position Relative to Image
+      // const overlayFinalTop = $el.overlayDrag.position().top - $el.thumbnailImage.position().top;
+      var cropCanvas = document.createElement('canvas');
+      cropCanvas.width = finalDimensionWidth;
+      cropCanvas.height = finalDimensionHeight;
+      cropCanvas.id = 'finalImage';
+      cropCanvas.getContext('2d').drawImage($el.thumbnailImage[0], 0, 0, finalDimensionWidth, finalDimensionHeight, 0, 0, finalDimensionWidth, finalDimensionHeight); // cropCanvas.getContext('2d').drawImage($el.overlayImage[0], 0, 0, finalDimension, overlayHeight, 0, overlayFinalTop, finalDimension, overlayHeight);
+      // Save Image using FileSaver.js Library
+
+      cropCanvas.toBlob(function (blob) {
+        saveAs(blob, 'finalImage.png');
+      });
     }; // Viewport resize
 
 
@@ -430,29 +449,31 @@ $(function () {
 
   ;
   /**
-   * Append Image to screen and clone original image for recrop-ability
-   * @param {HTML IMG Element} originalImage
-   */
+  * Append Image to screen and clone original image for recrop-ability
+  * @param {HTML IMG Element} originalImage
+  */
 
   function cloneAddImage(originalImage) {
-    var $cloneOriginal = $(originalImage);
-    $el.originalImage = $(originalImage);
-    $el.backUpImage = $el.originalImage.clone();
-    $cloneOriginal.attr('id', 'fullImage').removeClass();
-    $el.backUpImage.attr('id', 'backUpImage').addClass('hidden');
-    $('#imageResize').append($el.backUpImage, $el.originalImage);
+    $el.originalImage = $(originalImage); // $el.backUpImage = $el.originalImage.clone();
+
+    $el.originalImage.attr('id', 'fullImage').removeClass(); // $el.backUpImage.attr('id', 'backUpImage').addClass('hidden');
+    // $('#imageResize').append($el.backUpImage, $el.originalImage);
+
+    $('#imageResize').append($el.originalImage);
   }
   /**
-   * Initialize imageCropper on Image and display on
+   * Remove thumbnail from screen and show crop tool
    */
 
 
-  function initializeCropper() {
-    croppedObject = new imageCropper(); // $el.sectionCrop.removeClass('hidden');
-    // $el.sectionDragDrop.addClass('hidden');
+  function cropReset() {
+    $el.thumbnailImage.addClass('hidden');
+    $('#group1b').addClass('hidden');
+    $('#imageResize').removeClass('hidden');
+    $('#group1a').removeClass('hidden');
   }
   /**
-   * Converts image to dataURL with a FileReader resulting in a previews on screen within the cropTool
+   * Converts image previews within cropTool
    * @param {File Input} data
    * @returns true || false
    */
@@ -463,66 +484,47 @@ $(function () {
     var reader = new FileReader();
 
     reader.onload = function (e) {
-      userAction('restart');
-      userAction('recrop'); // Create an image with the DataURL Source
+      var img = new Image(); // Set Image source
 
-      var img = new Image();
+      img.src = e.target.result;
+      $el.originalImage.attr('src', e.target.result); // console.log($el.originalImage.attr('src'));
+      // Clear fileInput
+
+      $el.fileUpload.val(''); // Remove previous imageCropper
+
+      $('.image-resize *').remove(); // userAction('restart');
+
+      cropReset();
+      $el.originalImage.on('load', function () {
+        console.log('image loaded');
+      });
 
       img.onload = function () {
         // If error message remove
-        var $sizeError = $('.sizeError');
-        if ($sizeError.length !== 0) $sizeError.remove(); // Return error if image is not large enough
-
+        // const $sizeError = $('.sizeError');
+        // if ($sizeError.length !== 0)
+        //         $sizeError.remove();
+        // Return error if image is not large enough
         if (img.width < finalDimensionWidth || img.height < finalDimensionHeight) {
-          $el.sectionDragDrop.append('<span class="sizeError">Please Try a Larger Image</span>');
+          // $el.sectionDragDrop.append('<span class="sizeError">Please Try a Larger Image</span>');
           return false;
         } // Clone image if needed for recrop
+        // cloneAddImage(img);
+        // $el.originalImage = $(img);
+        // $el.backUpImage = $el.originalImage.clone();
 
 
-        cloneAddImage(img); // Intialize cropper over image
+        $el.originalImage.attr('id', 'fullImage').removeClass(); // $el.backUpImage.attr('id', 'backUpImage').addClass('hidden');
+        // $('#imageResize').append($el.backUpImage, $el.originalImage);
 
-        initializeCropper();
+        $('#imageResize').append($el.originalImage); // Intialize cropper over image
+
+        croppedObject = new imageCropper();
       };
-
-      img.src = e.target.result;
     };
 
     reader.readAsDataURL(file);
-  }
-
-  function userAction(action) {
-    if (action === 'restart') {
-      // Setup Initial Upload
-      $el.fileUpload.val(''); // $el.sectionDragDrop.removeClass('hidden');
-      // Hide Cropper Section & Remove Cropper
-      // $el.sectionCrop.addClass('hidden');
-
-      $('.image-resize *').remove(); // Hide Overlay Thumbnail Section
-      // $el.sectionThumbnail.addClass('hidden');
-      // $el.thumbnailImage.attr('src','');
-    }
-
-    if (action === 'recrop') {
-      // $el.sectionCrop.toggleClass('hidden');
-      // $el.thumbnailImage.toggleClass('hidden');
-      $el.thumbnailImage.addClass('hidden');
-      $('#group1b').addClass('hidden');
-      $('#imageResize').removeClass('hidden');
-      $('#group1a').removeClass('hidden');
-    }
-
-    if (action === 'crop') {// $el.sectionCrop.addClass('hidden');
-      // $el.sectionThumbnail.removeClass('hidden');
-      // $el.overlayDrag.css('top', $el.thumbnailImage.position().top);
-    }
-
-    if (action === 'recrop') {// $el.sectionCrop.removeClass('hidden');
-      // $el.sectionThumbnail.addClass('hidden');
-      // $el.thumbnailImage.attr('src', `data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==`).width(finalDimensionWidth);
-    }
-  }
-
-  ; // 'click tap': ,
+  } // 'click tap': ,
   // console.log();
   // $el.sectionDragDrop[0].addEventListener('click', function(e) {
   // console.log('trigger click');
@@ -549,18 +551,18 @@ $(function () {
   //     }
   // });
 
+
   $('#imageSelect').on('click', function () {
     $el.fileUpload.trigger('click');
   });
   $el.fileUpload.on('change', function (e) {
     addImage(e.target);
-  });
-  $('.restart').on('click', function (e) {
-    e.preventDefault();
-    userAction('restart');
-  });
+  }); // $('.restart').on('click', (e) => {
+  //     e.preventDefault();
+  //     userAction('restart');
+  // });
+
   $('#crop').on('click', function (e) {
-    console.log('clicked');
     e.stopPropagation();
     croppedObject.crop(); // userAction('crop');
     // overlayObject = new overlayPosition();
@@ -577,13 +579,13 @@ $(function () {
   }); // $el.overlayDrag.on('mousedown touchstart', (e) => {overlayObject.startMoving(e)});
 
   $('#recrop').on('click', function () {
-    userAction('recrop');
+    cropReset();
   });
   $('#download').on('click', function () {
-    overlayObject.createImage();
+    croppedObject.createImage();
   });
   $el.window.on('load', function () {
-    console.log('window loaded');
-    initializeCropper();
+    // cloneAddImage($el.originalImage);
+    croppedObject = new imageCropper();
   });
 });
