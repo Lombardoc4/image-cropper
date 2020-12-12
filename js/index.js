@@ -31,6 +31,7 @@ $(function () {
   // *IMAGE CROP MODIFIED FROM (https://codepen.io/Mestika/pen/qOWaqp?editors=1010)
   // * Rotation Added using Base64 Function
   // *************
+  // TODO Clear
 
   function imageCropper() {
     // let minDimension = $el.originalImage.width() < $el.originalImage.height() ? $el.originalImage.width() : $el.originalImage.height();
@@ -43,8 +44,8 @@ $(function () {
     var eventState = {};
     var allowResize = true;
     var imageLoaded = new $.Deferred();
-    var origSrc = new Image();
-    origSrc.crossOrigin = 'Anonymous';
+    var origSrc = new Image(); // origSrc.crossOrigin = 'Anonymous';
+
     origSrc.src = $el.croppingImage.attr('src'); // *****************************
     // * Initialize cropper tools on DOM when image loads
     // *
@@ -492,8 +493,37 @@ $(function () {
     };
   }
 
+  function readUrl(url) {
+    var img = new Image();
+
+    if (url.length > 20) {
+      img.src = url;
+    } else {
+      img.src = "placeholder.png";
+    } // Set Image source
+
+
+    img.id = 'croppingImage'; // Clear fileInput
+
+    $el.fileUpload.val('');
+    cropReset();
+
+    img.onload = function () {
+      if (img.width >= finalDimensionWidth && img.height >= finalDimensionHeight) {
+        addImage(img);
+      }
+    }; // console.log(url.length)
+    // $el.croppingImage.attr('src', url);
+
+  }
+
   $('#imageSelect').on('click', function () {
     $el.fileUpload.trigger('click');
+  });
+  $('#urlSelectInput').on('change paste', function (e) {
+    setTimeout(function () {
+      readUrl(e.target.value); // console.log('pasted?' ,e.target.value);
+    }, 100);
   });
   $el.fileUpload.on('change', function (e) {
     loadImage(e.target);
