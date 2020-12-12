@@ -14,80 +14,38 @@
 
 <body>
 
-    <!-- <div class="layout"> -->
+    <section>
+        <img class="hidden" id="thumbnailImage" src="">
+        <div class="image-resize" id="imageResize">
+            <!-- 1x1 pixel data -->
+            <!-- <img class="originalImage" src="data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw=="> -->
+            <img id="croppingImage" src="placeholder.png">
+        </div>
+        <div class="button-group" id="group1a">
+            <span class="btn"><img class="rotate" id="rotateLeft" src="./leftArrow.png"></span>
+            <span class="btn crop" id="crop">CROP</span>
+            <span class="btn"><img class="rotate" id="rotateRight" src="./rightArrow.png"></span>
+        </div>
+        <div class="button-group hidden" id="group1b">
+            <span class="btn crop" id="recrop">RECROP</span>
+            <span class="btn"><a id="download" download="">DOWNLOAD</a></span>
+        </div>
 
-        <section>
-            <img class="hidden" id="thumbnailImage" src="">
-            <div class="image-resize" id="imageResize">
-                <!-- 1x1 pixel data -->
-                <!-- <img class="originalImage" src="data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw=="> -->
-                <img class="originalImage" src="placeholder.png">
-            </div>
-            <div class="button-group" id="group1a">
-                <span class="btn"><img class="rotate" id="rotateLeft" src="./leftArrow.png"></span>
-                <span class="btn crop" id="crop">CROP</span>
-                <span class="btn"><img class="rotate" id="rotateRight" src="./rightArrow.png"></span>
-            </div>
-            <div class="button-group hidden" id="group1b">
-                <span class="btn crop" id="recrop">RECROP</span>
-                <span class="btn"><a id="download" download="">DOWNLOAD</a></span>
-            </div>
-
-            <div class="button-group group2">
-                <span class="btn" id="imageSelect">
-                    <img src="./image.svg" alt="">
-                    SELECT IMAGE
-                    <span class="mobile-hidden">
-                        or Drag & Drop
-                    </span>
-                </span>
-                <span class="btn" id="urlSelect">
-                    <img src="./image.svg" alt="">
-                    Enter URL
-                </span>
-            </div>
-            <input class="file-upload hidden" accept="image/*"  id="fileUpload" type="file">
-        </section>
-
-        <!-- Upload image -->
-        <!-- <section class="hidden" id="sectionDragAndDrop">
-            <div class="drop" id="drop">
-                <p>
-                    <img src="./image.svg" alt="">
-                    Select Image
-                </p>
+        <div class="button-group group2">
+            <span class="btn" id="imageSelect">
+                <img src="./image.svg" alt="">
+                SELECT IMAGE
                 <span class="mobile-hidden">
                     or Drag & Drop
                 </span>
-            </div>
-            <input class="file-upload hidden" accept="image/*"  id="fileUpload" type="file">
-        </section> -->
-
-        <!-- Resize image -->
-        <!-- <section class="hidden"  id="sectionCrop">
-            <span class="btn restart">Restart</span>
-            <div class="image-resize" id="imageResize"></div>
-            <div class="button-group">
-                <img class="btn" id="rotateLeft" src="./leftArrow.png">
-                <span class="btn crop" id="crop">CROP</span>
-                <img class="btn" id="rotateRight" src="./rightArrow.png">
-            </div>
-        </section> -->
-
-        <!-- Insert thumbnail -->
-        <!-- <section class="hidden" id="sectionThumbnail">
-            <span class="btn restart">Restart</span>
-            <div class="thumbnail" id="thumbnail">
-                <img id="thumbnailImage" src="">
-                <div id="overlayDrag"><img id="overlayIMG"></div>
-            </div>
-            <div class="button-group">
-                <span class="btn" id="reCrop">Re-Crop</span>
-                <span class="btn"><a id="download" download="">Download</a></span>
-            </div>
-        </section> -->
-
-    <!-- </div> -->
+            </span>
+            <span class="btn" id="urlSelect">
+                <img src="./image.svg" alt="">
+                ENTER URL
+            </span>
+        </div>
+        <input class="file-upload hidden" accept="image/*"  id="fileUpload" type="file">
+    </section>
 
     <script src="js/FileSaver.js"></script>
     <script src="js/index.js"></script>

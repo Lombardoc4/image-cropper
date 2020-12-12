@@ -1,7 +1,5 @@
 "use strict";
 
-function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
-
 // ///////////////////////////////////////////////
 // Enter everything into a self-firing function
 // Jquery Chaining!
@@ -12,35 +10,24 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
 $(function () {
   var config = {
     desktopDimension: 400,
-    mobileDimension: [350, 300],
-    thumbnailPlaceholder: 'data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw=='
+    mobileDimension: [350, 300] // thumbnailPlaceholder : 'data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==',
+
   }; // Jquery Common Elements
 
   var $el = {
     doc: $(document),
     window: $(window),
-    // sectionDragDrop:    $('#sectionDragAndDrop'),
-    drop: $('#drop'),
-    // sectionCrop:        $('#sectionCrop'),
-    // thumbnail:          $('#thumbnail'),
     thumbnailImage: $('#thumbnailImage'),
-    // sectionThumbnail:   $('#sectionThumbnail'),
-    // overlayImage:       $('#overlayIMG'),
-    // overlayDrag:        $('#overlayDrag'),
     fileUpload: $('#fileUpload'),
-    originalImage: $('.originalImage'),
+    croppingImage: $('#croppingImage'),
     // Dynamically created elements
-    backUpImage: '',
     cropMarker: '',
     icContainer: ''
   };
   var finalDimensionHeight = $el.window.width() > 600 ? config.desktopDimension : config.mobileDimension[0];
   var finalDimensionWidth = $el.window.width() > 600 ? config.desktopDimension : config.mobileDimension[1]; // global Vars
 
-  var croppedObject; // if ($el.thumbnailImage.attr('src') === '')
-  // $el.thumbnailImage.attr('src', config.thumbnailPlaceholder).width(finalDimensionWidth);
-  // $el.overlayDrag.css('top', $el.thumbnailImage.position().top);
-  // **************
+  var croppedObject; // **************
   // *IMAGE CROP MODIFIED FROM (https://codepen.io/Mestika/pen/qOWaqp?editors=1010)
   // * Rotation Added using Base64 Function
   // *************
@@ -58,14 +45,14 @@ $(function () {
     var imageLoaded = new $.Deferred();
     var origSrc = new Image();
     origSrc.crossOrigin = 'Anonymous';
-    origSrc.src = $el.originalImage.attr('src'); // *****************************
+    origSrc.src = $el.croppingImage.attr('src'); // *****************************
     // * Initialize cropper tools on DOM when image loads
     // *
     // *****************************
 
     origSrc.onload = function () {
       // * Crop Tool Markers
-      $el.originalImage.wrap('<div class="ic-container"></div>').before('\
+      $el.croppingImage.wrap('<div class="ic-container"></div>').before('\
                     <div class="ic-overlay-n" id="icOverlayN"></div>\
                     <div class="ic-overlay-e" id="icOverlayE"></div>\
                     <div class="ic-overlay-s" id="icOverlayS"></div>\
@@ -81,7 +68,7 @@ $(function () {
       $el.cropMarker = $('#icCropMarker');
       $el.icContainer = $('.ic-container'); // * Initiale sizing for Resizing function
 
-      imageScale = origSrc.width / $el.originalImage.width();
+      imageScale = origSrc.width / $el.croppingImage.width();
       imageRatio = origSrc.width / origSrc.height;
       cropRatio = finalDimensionWidth / finalDimensionHeight;
       adjustedRequiredWidth = finalDimensionWidth / imageScale;
@@ -92,8 +79,7 @@ $(function () {
 
       $el.cropMarker.on('mousedown touchstart', startResize);
       $el.cropMarker.on('mousedown touchstart', '#icMoveHandle', startMoving);
-      imageLoaded.resolve();
-      console.log($el.cropMarker.position());
+      imageLoaded.resolve(); // console.log($el.cropMarker.position())
     }; // **********************
     // * Resizing Crop Marker
     // **********************
@@ -139,29 +125,29 @@ $(function () {
       if (eventState.e.target.id === 'icResizeHandleSE') corners.SE = true;else if (eventState.e.target.id === 'icResizeHandleSW') corners.SW = true;else if (eventState.e.target.id === 'icResizeHandleNW') corners.NW = true;else if (eventState.e.target.id === 'icResizeHandleNE') corners.NE = true; // * Set cropper marker at new position
 
       if (corners.SE) {
-        width = mouse.x - eventState.containerLeft - $el.originalImage.offset().left;
+        width = mouse.x - eventState.containerLeft - $el.croppingImage.offset().left;
         height = width / finalDimensionWidth * finalDimensionHeight;
         left = eventState.containerLeft;
         top = eventState.containerTop;
       } else if (corners.SW) {
-        width = eventState.containerWidth - (mouse.x - eventState.containerLeft - $el.originalImage.offset().left);
+        width = eventState.containerWidth - (mouse.x - eventState.containerLeft - $el.croppingImage.offset().left);
         height = width / finalDimensionWidth * finalDimensionHeight;
-        left = mouse.x - $el.originalImage.offset().left;
+        left = mouse.x - $el.croppingImage.offset().left;
         top = eventState.containerTop;
       } else if (corners.NW) {
-        width = eventState.containerWidth - (mouse.x - eventState.containerLeft - $el.originalImage.offset().left);
+        width = eventState.containerWidth - (mouse.x - eventState.containerLeft - $el.croppingImage.offset().left);
         height = width / finalDimensionWidth * finalDimensionHeight;
-        left = mouse.x - $el.originalImage.offset().left;
+        left = mouse.x - $el.croppingImage.offset().left;
         top = originalOffset.top + originalHeight - height;
       } else if (corners.NE) {
-        width = mouse.x - eventState.containerLeft - $el.originalImage.offset().left;
+        width = mouse.x - eventState.containerLeft - $el.croppingImage.offset().left;
         height = width / finalDimensionWidth * finalDimensionHeight;
         left = eventState.containerLeft;
         top = originalOffset.top + originalHeight - height;
       } // * Set Border Limits on Crop Marker
 
 
-      if (top >= 0 && left >= 0 && Math.round(top + height) <= Math.round($el.originalImage.height()) && Math.round(left + width) <= Math.round($el.originalImage.width())) allowResize = true;
+      if (top >= 0 && left >= 0 && Math.round(top + height) <= Math.round($el.croppingImage.height()) && Math.round(left + width) <= Math.round($el.croppingImage.width())) allowResize = true;
 
       if (allowResize) {
         // * Top boundary
@@ -179,20 +165,20 @@ $(function () {
             if (corners.SE) top = originalOffset.top - (height - originalHeight);
             allowResize = false;
           } // * Bottom boundary
-          else if (Math.round(top + height) > Math.round($el.originalImage.height())) {
-              height = $el.originalImage.height() - top;
+          else if (Math.round(top + height) > Math.round($el.croppingImage.height())) {
+              height = $el.croppingImage.height() - top;
               width = width / finalDimensionWidth * finalDimensionHeight;
               if (corners.SW) left = originalOffset.left - (width - originalWidth);
               allowResize = false;
             } // * Right boundary
-            else if (Math.round(left + width) > Math.round($el.originalImage.width())) {
-                width = $el.originalImage.width() - left;
+            else if (Math.round(left + width) > Math.round($el.croppingImage.width())) {
+                width = $el.croppingImage.width() - left;
                 height = width / finalDimensionWidth * finalDimensionHeight;
                 if (corners.NE) top = originalOffset.top - (height - originalHeight);
                 allowResize = false;
-              }
+              } // console.log('top',top);
+        // * Check for min width / height
 
-        console.log('top', top); // * Check for min width / height
 
         if (width > adjustedRequiredWidth && height > adjustedRequiredHeight) {
           $el.cropMarker.outerWidth(width).outerHeight(height);
@@ -240,9 +226,9 @@ $(function () {
       var top = mouse.y - (eventState.mouseY - eventState.containerTop);
       var left = mouse.x - (eventState.mouseX - eventState.containerLeft);
       if (top < 0) top = 0;
-      if (top + $el.cropMarker.outerHeight() > $el.originalImage.height()) top = $el.originalImage.height() - $el.cropMarker.height();
+      if (top + $el.cropMarker.outerHeight() > $el.croppingImage.height()) top = $el.croppingImage.height() - $el.cropMarker.height();
       if (left < 0) left = 0;
-      if (left + $el.cropMarker.outerWidth() > $el.originalImage.width()) left = $el.originalImage.width() - $el.cropMarker.width();
+      if (left + $el.cropMarker.outerWidth() > $el.croppingImage.width()) left = $el.croppingImage.width() - $el.cropMarker.width();
       $el.cropMarker.css({
         top: top,
         left: left
@@ -262,8 +248,8 @@ $(function () {
     };
 
     var centerCropMarker = function centerCropMarker() {
-      var origWidth = $el.originalImage.width();
-      var origHeight = $el.originalImage.height(); // console.log({origWidth, origHeight })
+      var origWidth = $el.croppingImage.width();
+      var origHeight = $el.croppingImage.height(); // console.log({origWidth, origHeight })
 
       if (cropRatio > imageRatio) {
         // console.log('crop > image', ((origWidth - $el.cropMarker.height()) / 2));
@@ -274,7 +260,7 @@ $(function () {
           left: 0
         });
       } else {
-        console.log('crop < image');
+        // console.log('crop < image')
         $el.cropMarker.outerHeight(origHeight);
         $el.cropMarker.outerWidth($el.cropMarker.outerHeight() / finalDimensionWidth * finalDimensionHeight);
         $el.cropMarker.css({
@@ -285,8 +271,8 @@ $(function () {
     };
 
     function repositionOverlay() {
-      var imgWidth = $el.originalImage.width();
-      var imgHeight = $el.originalImage.height();
+      var imgWidth = $el.croppingImage.width();
+      var imgHeight = $el.croppingImage.height();
       var cropTop = $el.cropMarker.position().top;
       var cropLeft = $el.cropMarker.position().left;
       var cropWidth = $el.cropMarker.width();
@@ -348,30 +334,33 @@ $(function () {
     }
 
     this.rotateRight = function () {
-      rotateBase64Image($el.backUpImage.attr('src'), 'right').then(function (rotated) {
-        // userAction('restart');
-        $el.backUpImage.attr('src', "".concat(rotated));
-      }).then(function () {
-        if (_typeof($el.icContainer) === 'object') {
-          $('.ic-container').remove();
-        }
-      }).then(function () {
-        cloneAddImage($el.backUpImage);
-        croppedObject = new imageCropper();
+      rotateBase64Image($el.croppingImage.attr('src'), 'right').then(function (rotated) {
+        $el.croppingImage.attr('src', "".concat(rotated));
+        $el.croppingImage.on('load', function () {
+          addImage($el.croppingImage);
+        });
       }).catch(function (err) {
         console.error(err);
       });
     };
 
     this.rotateLeft = function () {
-      rotateBase64Image($el.backUpImage.attr('src'), 'left').then(function (rotated) {
-        $el.backUpImage.attr('src', "".concat(rotated));
-      }).then(function () {
-        if (_typeof($el.icContainer) === 'object') $el.icContainer.remove();
-      }).then(function () {
-        cloneAddImage($el.backUpImage);
-        croppedObject = new imageCropper();
-      }).catch(function (err) {
+      rotateBase64Image($el.croppingImage.attr('src'), 'left').then(function (rotated) {
+        $el.croppingImage.attr('src', "".concat(rotated));
+        $el.croppingImage.on('load', function () {
+          // $('.image-resize *').remove();
+          addImage($el.croppingImage); // Intialize cropper over image
+          // croppedObject = new imageCropper();
+        });
+      }) // .then(() => {
+      //     // if( typeof $el.icContainer === 'object')
+      //         // $el.icContainer.remove()
+      // })
+      // .then(() => {
+      //     cloneAddImage($el.originalImage)
+      //     croppedObject = new imageCropper();
+      // })
+      .catch(function (err) {
         console.error(err);
       });
     }; // * Crop Image and return a JPG
@@ -379,9 +368,9 @@ $(function () {
 
 
     this.crop = function () {
-      console.log('cropping');
+      // console.log('cropping');
       var cropCanvas;
-      var scale = origSrc.width / $el.originalImage.width();
+      var scale = origSrc.width / $el.croppingImage.width();
       var left = Math.round($el.cropMarker.position().left * scale);
       var top = Math.round($el.cropMarker.position().top * scale);
       var width = Math.round($el.cropMarker.outerWidth() * scale);
@@ -407,7 +396,7 @@ $(function () {
 
     this.position = function (left, top, width, height) {
       $.when(imageLoaded).done(function () {
-        var scale = origSrc.width / $el.originalImage.width();
+        var scale = origSrc.width / $el.croppingImage.width();
         left = Math.round(left / scale), top = Math.round(top / scale), width = Math.round(width / scale), height = Math.round(height / scale);
         $el.cropMarker.outerWidth(width).outerHeight(height);
         $el.cropMarker.css({
@@ -439,7 +428,7 @@ $(function () {
 
 
     $(window).resize(function () {
-      imageScale = origSrc.width / $el.originalImage.width();
+      imageScale = origSrc.width / $el.croppingImage.width();
       adjustedRequiredWidth = finalDimensionWidth / imageScale;
       adjustedRequiredHeight = finalDimensionHeight / imageScale;
       centerCropMarker();
@@ -449,17 +438,19 @@ $(function () {
 
   ;
   /**
-  * Append Image to screen and clone original image for recrop-ability
-  * @param {HTML IMG Element} originalImage
-  */
+   * Append Image to screen and clone original image for recrop-ability
+   * @param {HTML IMG Element} image
+   */
 
-  function cloneAddImage(originalImage) {
-    $el.originalImage = $(originalImage); // $el.backUpImage = $el.originalImage.clone();
+  function addImage(image) {
+    // Remove old image
+    $('.image-resize *').remove(); // set attributes and add image
 
-    $el.originalImage.attr('id', 'fullImage').removeClass(); // $el.backUpImage.attr('id', 'backUpImage').addClass('hidden');
-    // $('#imageResize').append($el.backUpImage, $el.originalImage);
+    $el.croppingImage = $(image); // $el.originalImage.attr('id', 'fullImage').removeClass();
 
-    $('#imageResize').append($el.originalImage);
+    $('#imageResize').append($el.croppingImage); // Initialize imageCropper
+
+    croppedObject = new imageCropper();
   }
   /**
    * Remove thumbnail from screen and show crop tool
@@ -479,93 +470,37 @@ $(function () {
    */
 
 
-  function addImage(data) {
+  function loadImage(data) {
     var file = data.files[0];
     var reader = new FileReader();
+    reader.readAsDataURL(file);
 
     reader.onload = function (e) {
       var img = new Image(); // Set Image source
 
       img.src = e.target.result;
-      $el.originalImage.attr('src', e.target.result); // console.log($el.originalImage.attr('src'));
-      // Clear fileInput
+      img.id = 'croppingImage'; // Clear fileInput
 
-      $el.fileUpload.val(''); // Remove previous imageCropper
-
-      $('.image-resize *').remove(); // userAction('restart');
-
+      $el.fileUpload.val('');
       cropReset();
-      $el.originalImage.on('load', function () {
-        console.log('image loaded');
-      });
 
       img.onload = function () {
-        // If error message remove
-        // const $sizeError = $('.sizeError');
-        // if ($sizeError.length !== 0)
-        //         $sizeError.remove();
-        // Return error if image is not large enough
-        if (img.width < finalDimensionWidth || img.height < finalDimensionHeight) {
-          // $el.sectionDragDrop.append('<span class="sizeError">Please Try a Larger Image</span>');
-          return false;
-        } // Clone image if needed for recrop
-        // cloneAddImage(img);
-        // $el.originalImage = $(img);
-        // $el.backUpImage = $el.originalImage.clone();
-
-
-        $el.originalImage.attr('id', 'fullImage').removeClass(); // $el.backUpImage.attr('id', 'backUpImage').addClass('hidden');
-        // $('#imageResize').append($el.backUpImage, $el.originalImage);
-
-        $('#imageResize').append($el.originalImage); // Intialize cropper over image
-
-        croppedObject = new imageCropper();
+        if (img.width >= finalDimensionWidth && img.height >= finalDimensionHeight) {
+          addImage(img);
+        }
       };
     };
-
-    reader.readAsDataURL(file);
-  } // 'click tap': ,
-  // console.log();
-  // $el.sectionDragDrop[0].addEventListener('click', function(e) {
-  // console.log('trigger click');
-  // $el.fileUpload.trigger('click');
-  // })
-  // $el.sectionDragDrop.on('click', function() {
-  //     console.log('trigger click');
-  //     $el.fileUpload.trigger('click');
-  // });
-  // $Drop Action Listenvers
-  // $el.sectionDragDrop.on({
-  //     'dragover': function(e) {
-  //         e.preventDefault();
-  //         e.stopPropagation();
-  //         this.classList.add('dragging');
-  //     },
-  //     'dragleave': function() {
-  //         this.classList.remove('dragging');
-  //     },
-  //     'drop': function(e) {
-  //         e.preventDefault();
-  //         e.stopPropagation();
-  //         addImage(e.dataTransfer || e.originalEvent.dataTransfer);
-  //     }
-  // });
-
+  }
 
   $('#imageSelect').on('click', function () {
     $el.fileUpload.trigger('click');
   });
   $el.fileUpload.on('change', function (e) {
-    addImage(e.target);
-  }); // $('.restart').on('click', (e) => {
-  //     e.preventDefault();
-  //     userAction('restart');
-  // });
-
+    loadImage(e.target);
+  });
   $('#crop').on('click', function (e) {
     e.stopPropagation();
-    croppedObject.crop(); // userAction('crop');
-    // overlayObject = new overlayPosition();
+    croppedObject.crop();
   });
   $('#rotateRight').on('click', function (e) {
     e.stopPropagation();
@@ -576,8 +511,7 @@ $(function () {
     e.stopPropagation();
     e.preventDefault();
     croppedObject.rotateLeft();
-  }); // $el.overlayDrag.on('mousedown touchstart', (e) => {overlayObject.startMoving(e)});
-
+  });
   $('#recrop').on('click', function () {
     cropReset();
   });
@@ -585,7 +519,6 @@ $(function () {
     croppedObject.createImage();
   });
   $el.window.on('load', function () {
-    // cloneAddImage($el.originalImage);
     croppedObject = new imageCropper();
   });
 });
