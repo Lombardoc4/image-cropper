@@ -1,5 +1,7 @@
 "use strict";
 
+function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
 // ///////////////////////////////////////////////
 // Enter everything into a self-firing function
 // Jquery Chaining!
@@ -31,6 +33,7 @@ $(function () {
   // *IMAGE CROP MODIFIED FROM (https://codepen.io/Mestika/pen/qOWaqp?editors=1010)
   // * Rotation Added using Base64 Function
   // *************
+  // !!!! MOBILE ISSUES
 
   function isTainted(ctx) {
     try {
@@ -367,12 +370,12 @@ $(function () {
 
     this.rotateLeft = function () {
       rotateBase64Image($el.croppingImage.attr('src'), 'left').then(function (rotated) {
-        $el.croppingImage.attr('src', "".concat(rotated));
-        $el.croppingImage.on('load', function () {
-          // $('.image-resize *').remove();
-          addImage($el.croppingImage); // Intialize cropper over image
-          // croppedObject = new imageCropper();
-        });
+        if (rotated) {
+          $el.croppingImage.attr('src', "".concat(rotated));
+          $el.croppingImage.on('load', function () {
+            addImage($el.croppingImage);
+          });
+        }
       }).catch(function (err) {
         console.error(err);
       });
@@ -392,9 +395,10 @@ $(function () {
       cropCanvas.width = finalDimensionWidth;
       cropCanvas.height = finalDimensionHeight;
       cropCanvas.getContext('2d').drawImage(origSrc, left, top, width, height, 0, 0, finalDimensionWidth, finalDimensionHeight);
-      console.log();
+      console.log(_typeof(cropCanvas));
+      console.log(isTainted(cropCanvas));
 
-      if ((cropCanvas instanceof Blob || cropCanvas instanceof Object) && isTainted(cropCanvas)) {
+      if ((cropCanvas instanceof Blob || _typeof(cropCanvas) === 'object') && isTainted(cropCanvas)) {
         cropCanvas.toBlob(function (blob) {
           var newImg = document.createElement('img');
           var url = URL.createObjectURL(blob);
