@@ -31,7 +31,16 @@ $(function () {
   // *IMAGE CROP MODIFIED FROM (https://codepen.io/Mestika/pen/qOWaqp?editors=1010)
   // * Rotation Added using Base64 Function
   // *************
-  // TODO Clear
+
+  function isTainted(ctx) {
+    try {
+      var pixel = ctx.getImageData(0, 0, 1, 1);
+      return false;
+    } catch (err) {
+      return err.code === 18;
+    }
+  } // TODO Clear
+
 
   function imageCropper() {
     // let minDimension = $el.originalImage.width() < $el.originalImage.height() ? $el.originalImage.width() : $el.originalImage.height();
@@ -324,8 +333,17 @@ $(function () {
           ctx.translate(canvas.width / 2, canvas.height / 2);
           ctx.rotate(degrees * Math.PI / 180);
           ctx.drawImage(image, -image.width / 2, -image.height / 2); //assume plain base64 if not provided
+          // canvas.toDataURL("image/jpeg")
 
-          resolve(canvas.toDataURL("image/jpeg")); // document.body.removeChild(canvas);
+          var newImageSrc;
+
+          if (isTainted(ctx)) {
+            newImageSrc = 'placeholder.png';
+          } else {
+            newImageSrc = canvas.toDataURL("image/jpeg");
+          }
+
+          resolve(newImageSrc); // document.body.removeChild(canvas);
         };
 
         image.onerror = function () {
@@ -336,10 +354,12 @@ $(function () {
 
     this.rotateRight = function () {
       rotateBase64Image($el.croppingImage.attr('src'), 'right').then(function (rotated) {
-        $el.croppingImage.attr('src', "".concat(rotated));
-        $el.croppingImage.on('load', function () {
-          addImage($el.croppingImage);
-        });
+        if (rotated) {
+          $el.croppingImage.attr('src', "".concat(rotated));
+          $el.croppingImage.on('load', function () {
+            addImage($el.croppingImage);
+          });
+        }
       }).catch(function (err) {
         console.error(err);
       });
@@ -353,15 +373,7 @@ $(function () {
           addImage($el.croppingImage); // Intialize cropper over image
           // croppedObject = new imageCropper();
         });
-      }) // .then(() => {
-      //     // if( typeof $el.icContainer === 'object')
-      //         // $el.icContainer.remove()
-      // })
-      // .then(() => {
-      //     cloneAddImage($el.originalImage)
-      //     croppedObject = new imageCropper();
-      // })
-      .catch(function (err) {
+      }).catch(function (err) {
         console.error(err);
       });
     }; // * Crop Image and return a JPG
@@ -380,19 +392,28 @@ $(function () {
       cropCanvas.width = finalDimensionWidth;
       cropCanvas.height = finalDimensionHeight;
       cropCanvas.getContext('2d').drawImage(origSrc, left, top, width, height, 0, 0, finalDimensionWidth, finalDimensionHeight);
-      cropCanvas.toBlob(function (blob) {
-        var newImg = document.createElement('img');
-        var url = URL.createObjectURL(blob);
-        $el.thumbnailImage.attr('src', url);
-        $el.thumbnailImage.removeClass('hidden');
-        $('#group1b').removeClass('hidden');
-        $('#imageResize').addClass('hidden');
-        $('#group1a').addClass('hidden');
+      console.log();
 
-        newImg.onload = function () {
-          URL.revokeObjectURL(url);
-        };
-      }, 'image/jpg', 1.0);
+      if ((cropCanvas instanceof Blob || cropCanvas instanceof Object) && isTainted(cropCanvas)) {
+        cropCanvas.toBlob(function (blob) {
+          var newImg = document.createElement('img');
+          var url = URL.createObjectURL(blob);
+          $el.thumbnailImage.attr('src', url);
+          $el.thumbnailImage.removeClass('hidden');
+          $('#group1b').removeClass('hidden');
+          $('#imageResize').addClass('hidden');
+          $('#group1a').addClass('hidden');
+
+          newImg.onload = function () {
+            URL.revokeObjectURL(url);
+          };
+        }, 'image/jpg', 1.0);
+      } else {
+        $el.croppingImage.attr('src', 'placeholder.png');
+        $el.croppingImage.on('load', function () {
+          addImage($el.croppingImage);
+        });
+      }
     };
 
     this.position = function (left, top, width, height) {
@@ -512,17 +533,15 @@ $(function () {
       if (img.width >= finalDimensionWidth && img.height >= finalDimensionHeight) {
         addImage(img);
       }
-    }; // console.log(url.length)
-    // $el.croppingImage.attr('src', url);
-
+    };
   }
 
   $('#imageSelect').on('click', function () {
     $el.fileUpload.trigger('click');
   });
-  $('#urlSelectInput').on('change paste', function (e) {
+  $('#urlSelectInput').on('paste', function (e) {
     setTimeout(function () {
-      readUrl(e.target.value); // console.log('pasted?' ,e.target.value);
+      readUrl(e.target.value);
     }, 100);
   });
   $el.fileUpload.on('change', function (e) {
