@@ -338,7 +338,7 @@ $(function () {
           ctx.drawImage(image, -image.width / 2, -image.height / 2); //assume plain base64 if not provided
           // canvas.toDataURL("image/jpeg")
 
-          var newImageSrc;
+          var newImageSrc; // console.log(isTainted(ctx))
 
           if (isTainted(ctx)) {
             newImageSrc = 'placeholder.png';
@@ -395,10 +395,8 @@ $(function () {
       cropCanvas.width = finalDimensionWidth;
       cropCanvas.height = finalDimensionHeight;
       cropCanvas.getContext('2d').drawImage(origSrc, left, top, width, height, 0, 0, finalDimensionWidth, finalDimensionHeight);
-      console.log(_typeof(cropCanvas));
-      console.log(isTainted(cropCanvas));
 
-      if ((cropCanvas instanceof Blob || _typeof(cropCanvas) === 'object') && isTainted(cropCanvas)) {
+      if ((cropCanvas instanceof Blob || _typeof(cropCanvas) === 'object') && !isTainted(cropCanvas)) {
         cropCanvas.toBlob(function (blob) {
           var newImg = document.createElement('img');
           var url = URL.createObjectURL(blob);
@@ -504,6 +502,7 @@ $(function () {
     reader.onload = function (e) {
       var img = new Image(); // Set Image source
 
+      img.crossOrigin = "Anonymous";
       img.src = e.target.result;
       img.id = 'croppingImage'; // Clear fileInput
 
