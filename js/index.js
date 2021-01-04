@@ -11,7 +11,7 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
 // ///////////////////////////////////////////////
 $(function () {
   var config = {
-    desktopDimension: 400,
+    desktopDimension: 500,
     mobileDimension: [350, 300] // thumbnailPlaceholder : 'data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==',
 
   }; // Jquery Common Elements
